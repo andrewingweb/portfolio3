@@ -1,15 +1,15 @@
-var pointLight, sun, moon, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto, earthOrbit, ring, controls, scene, camera, renderer, scene;
+var pointLight, sun1, sun, moon, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto, earthOrbit, ring, controls, scene, camera, renderer, scene;
 var planetSegments = 48;
-var mercuryData = constructPlanetData((200/47.87), 0.004, 28, "mercury", "img/mercury.jpg", 3.2, planetSegments);
-var venusData = constructPlanetData((200/35.02), 0.002, 44, "venus", "img/venus.jpg", 5.8, planetSegments);
-var earthData = constructPlanetData((200/29.78), 0.02, 62, "earth", "img/earth.jpg", 6, planetSegments);
-var marsData = constructPlanetData((200/24.077), 0.018, 78, "mars", "img/mars.jpg", 4, planetSegments);
-var jupiterData = constructPlanetData((200/13.07), 0.04, 100, "jupiter", "img/jupiter.jpg", 12, planetSegments);
-var saturnData = constructPlanetData((200/9.69), 0.038, 138, "saturn", "img/saturn.jpg", 10, planetSegments);
-var uranusData = constructPlanetData((200/6.81), 0.03, 176, "uranus", "img/uranus.jpg", 7, planetSegments);
-var neptuneData = constructPlanetData((200/5.43), 0.032, 200, "neptune", "img/neptune.jpg", 7, planetSegments);
-var plutoData = constructPlanetData((200/4.74), 0.008, 216, "pluto", "img/pluto.jpg", 2.8, planetSegments);
-var moonData = constructPlanetData(29.5, 0.01, 2.8, "moon", "img/moon.jpg", 0.5, planetSegments);
+var mercuryData = constructPlanetData((200/47.87), 0.004, 38, "mercury", "img/mercury.jpg", 3.2, planetSegments);
+var venusData = constructPlanetData((200/35.02), 0.002, 54, "venus", "img/venus.jpg", 5.8, planetSegments);
+var earthData = constructPlanetData((200/29.78), 0.02, 72, "earth", "img/earth.jpg", 6, planetSegments);
+var marsData = constructPlanetData((200/24.077), 0.018, 88, "mars", "img/mars.jpg", 4, planetSegments);
+var jupiterData = constructPlanetData((200/13.07), 0.04, 110, "jupiter", "img/jupiter.jpg", 12, planetSegments);
+var saturnData = constructPlanetData((200/9.69), 0.038, 148, "saturn", "img/saturn.jpg", 10, planetSegments);
+var uranusData = constructPlanetData((200/6.81), 0.03, 186, "uranus", "img/uranus.jpg", 7, planetSegments);
+var neptuneData = constructPlanetData((200/5.43), 0.032, 210, "neptune", "img/neptune.jpg", 7, planetSegments);
+var plutoData = constructPlanetData((200/4.74), 0.008, 226, "pluto", "img/pluto.jpg", 2.8, planetSegments);
+var moonData = constructPlanetData(29.5, 0.01, 11.0, "moon", "img/moon.jpg", 1.5, planetSegments);
 var orbitData = {value: 200, runOrbit: true, runRotation: true};
 var clock = new THREE.Clock();
 
@@ -247,9 +247,8 @@ function update(renderer, scene, camera, controls) {
     movePlanet(neptune, neptuneData, time);
     movePlanet(pluto, plutoData, time);
     movePlanet(ring, saturnData, time, true);
-    
     moveMoon(moon, earth, moonData, time);
-
+    
     renderer.render(scene, camera);
     requestAnimationFrame(function () {
         update(renderer, scene, camera, controls);
@@ -268,9 +267,9 @@ function init() {
             1, // near clipping plane
             1000 // far clipping plane
             );
-    camera.position.z = 90;
-    camera.position.x = -90;
-    camera.position.y = 90;
+    camera.position.z = 100;
+    camera.position.x = -100;
+    camera.position.y = 100;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // Create the scene that holds all of the visible objects.
@@ -309,22 +308,32 @@ function init() {
     scene.add(ambientLight);
 
     // Create the sun.
-    var sunMaterial = getMaterial("basic", "rgb(255, 255, 255)");
-    sun = getSphere(sunMaterial, 16, 48);
-    scene.add(sun);
+    const textureLoader = new THREE.TextureLoader();
+
+    const sunGeo1 = new THREE.SphereGeometry(30, 30, 30);
+    const sunMat1 = new THREE.MeshBasicMaterial({
+    map: textureLoader.load("img/sun.jpg")
+});
+const sun1 = new THREE.Mesh(sunGeo1, sunMat1);
+  scene.add(sun1);
+  
+  
+    var sunMat = getMaterial("basic", "rgb(255, 255, 255)");
+    sun = getSphere(sunMat, 16, 48);
+    //scene.add(sun);
 
     // Create the glow of the sun.
     var spriteMaterial = new THREE.SpriteMaterial(
             {
                 map: new THREE.ImageUtils.loadTexture("img/glow.png")
                 , useScreenCoordinates: false
-                , color: 0xffffee
+                , color: 0xfcc41c
                 , transparent: false
                 , blending: THREE.AdditiveBlending
             });
     var sprite = new THREE.Sprite(spriteMaterial);
     sprite.scale.set(70, 70, 1.0);
-    sun.add(sprite); // This centers the glow at the sun.
+    sun1.add(sprite); // This centers the glow at the sun.
 
     // Create the Earth, the Moon, and a ring around the earth.
     mercury = loadTexturedPlanet(mercuryData, mercuryData.distanceFromAxis, 0, 0);
