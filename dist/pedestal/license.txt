@@ -1,0 +1,11 @@
+Model Information:
+* title:	Doric Twist Pedestal
+* source:	https://sketchfab.com/3d-models/doric-twist-pedestal-7936fc9cbb6547459bfecb20910281ec
+* author:	Nikkip (https://sketchfab.com/nikkip)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Doric Twist Pedestal" (https://sketchfab.com/3d-models/doric-twist-pedestal-7936fc9cbb6547459bfecb20910281ec) by Nikkip (https://sketchfab.com/nikkip) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

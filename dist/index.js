@@ -13,6 +13,7 @@ var pointLight,
   pluto,
   earthOrbit,
   ring,
+  desk,
   controls,
   scene,
   camera,
@@ -20,90 +21,91 @@ var pointLight,
   scene;
 var planetSegments = 48;
 var mercuryData = constructPlanetData(
-  200 / 47.87,
+  2000 / 47.87,
   0.004,
-  235,
+  35,
   "mercury",
   "img/mercury.jpg",
   2.44,
   planetSegments
 );
 var venusData = constructPlanetData(
-  200 / 35.02,
+  2000 / 35.02,
   0.002,
-  267,
+  67,
   "venus",
   "img/venus.jpg",
   6.052,
   planetSegments
 );
 var earthData = constructPlanetData(
-  200 / 29.78,
+  2000 / 29.78,
   0.02,
-  293,
+  93,
   "earth",
   "img/earth.jpg",
   6.371,
   planetSegments
 );
 var marsData = constructPlanetData(
-  200 / 24.077,
+  2000 / 24.077,
   0.018,
-  342,
+  142,
   "mars",
   "img/mars.jpg",
   3.39,
   planetSegments
 );
 var jupiterData = constructPlanetData(
-  200 / 13.07,
+  2000 / 13.07,
   0.04,
   484,
   "jupiter",
   "img/jupiter.jpg",
-  69.911,
+  19.911,
   planetSegments
 );
 var saturnData = constructPlanetData(
-  200 / 9.69,
+  2000 / 9.69,
   0.038,
-  889,
+  689,
   "saturn",
   "img/saturn.jpg",
-  58.232,
+  18.232,
   planetSegments
 );
 var uranusData = constructPlanetData(
-  200 / 6.81,
+  2000 / 6.81,
   0.03,
-  1190,
+  1290,
   "uranus",
   "img/uranus.jpg",
-  25.362,
+  15.362,
   planetSegments
 );
 var neptuneData = constructPlanetData(
-  200 / 5.43,
+  2000 / 5.43,
   0.032,
-  1680,
+  1490,
   "neptune",
   "img/neptune.jpg",
-  18.622,
+  12.622,
   planetSegments
 );
 var plutoData = constructPlanetData(
-  200 / 4.74,
+  2000 / 4.74,
   0.008,
-  2070,
+  1600,
   "pluto",
   "img/pluto.jpg",
   2.8,
   planetSegments
 );
+
 var moonData = constructPlanetData(
   29.5,
   0.01,
-  11.0,
+  10.1,
   "moon",
   "img/moon.jpg",
   1.5,
@@ -356,7 +358,7 @@ function moveMoon(myMoon, myPlanet, myData, myTime) {
  * @returns {undefined}
  */
 function update(renderer, scene, camera, controls) {
-  pointLight.position.copy(sun.position);
+  pointLight.position.set(0, 3, 0);
   controls.update();
 
   var time = Date.now();
@@ -370,6 +372,7 @@ function update(renderer, scene, camera, controls) {
   movePlanet(uranus, uranusData, time);
   movePlanet(neptune, neptuneData, time);
   movePlanet(pluto, plutoData, time);
+
   movePlanet(ring, saturnData, time, true);
   moveMoon(moon, earth, moonData, time);
 
@@ -386,21 +389,18 @@ function update(renderer, scene, camera, controls) {
 function init() {
   // Create the camera that allows us to view into the scene.
   camera = new THREE.PerspectiveCamera(
-    45, // field of view
+    75, // field of view
     window.innerWidth / window.innerHeight, // aspect ratio
-    1, // near clipping plane
-    100000 // far clipping plane
+    0.1, // near clipping plane
+    10000 // far clipping plane
   );
-  camera.position.z = 1000;
-  camera.position.x = -1000;
-  camera.position.y = 1000;
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  camera.position.set(0, 5, 14);
 
   // Create the scene that holds all of the visible objects.
   scene = new THREE.Scene();
 
   // Create the renderer that controls animation.
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   // Attach the renderer to the div element.
@@ -427,22 +427,27 @@ function init() {
   scene.background = reflectionCube;
 
   // Create light from the sun.
-  pointLight = getPointLight(1.5, "rgb(255, 220, 180)");
+  pointLight = getPointLight(0.5, "rgb(255, 220, 180)");
   scene.add(pointLight);
 
   // Create light that is viewable from all directions.
   var ambientLight = new THREE.AmbientLight(0xaaaaaa);
   scene.add(ambientLight);
 
+  //direct light
+  var light = new THREE.DirectionalLight(0xffffff, 2);
+  light.position.set(4, 2, 18);
+  //scene.add(light);
   // Create the sun.
   const textureLoader = new THREE.TextureLoader();
 
-  const sunGeo1 = new THREE.SphereGeometry(96.342, 90, 90);
+  const sunGeo1 = new THREE.SphereGeometry(0.69, 90, 90);
   const sunMat1 = new THREE.MeshBasicMaterial({
     map: textureLoader.load("img/sun.jpg"),
   });
   const sun1 = new THREE.Mesh(sunGeo1, sunMat1);
   scene.add(sun1);
+  sun1.position.setY(2.45);
 
   var sunMat = getMaterial("basic", "rgb(255, 255, 255)");
   sun = getSphere(sunMat, 16, 48);
@@ -457,8 +462,64 @@ function init() {
     blending: THREE.AdditiveBlending,
   });
   var sprite = new THREE.Sprite(spriteMaterial);
-  sprite.scale.set(310, 310, 1.0);
-  sun1.add(sprite); // This centers the glow at the sun.
+  sprite.scale.set(2, 2, 1.0);
+  //sun1.add(sprite); // This centers the glow at the sun.
+
+  //create planet
+
+  const geometry = new THREE.PlaneGeometry(15, 15);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.3,
+    side: THREE.DoubleSide,
+  });
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(17, 17),
+    new THREE.MeshBasicMaterial({
+      map: new THREE.ImageUtils.loadTexture("img/glass.jpg"),
+      transparent: true,
+      opacity: 0.3,
+      side: THREE.DoubleSide,
+      //visible: false
+    })
+  );
+
+  plane.position.set(0, 0, 0);
+  plane.rotateX(-Math.PI / 2);
+  scene.add(plane);
+  //plane.rotateZ(-0.6);
+  const grid = new THREE.GridHelper(17, 17);
+  //scene.add(grid);
+
+  //create Desk
+  let loader = new THREE.GLTFLoader();
+  loader.load("./desk/scene.gltf", function (gltf) {
+    scene.add(gltf.scene);
+    gltf.scene.position.set(5, -0.6, -2);
+    //gltf.scene.rotateY(-Math.PI / 6);
+  });
+
+  let loader1 = new THREE.GLTFLoader();
+  loader1.load("./pedestal/scene.gltf", function (gltf) {
+    scene.add(gltf.scene);
+    gltf.scene.scale.set(3.5, 2.4, 3.5);
+  });
+  let loader2 = new THREE.GLTFLoader();
+  loader2.load("./sun/scene.gltf", function (sun3) {
+    //scene.add(sun3.scene);
+    sun3.scene.scale.set(0.1, 0.1, 0.1);
+    sun3.scene.position.set(0, 3, 0);
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      sun1.rotation.y += 0.004;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+  });
 
   // Create the Earth, the Moon, and a ring around the earth.
   mercury = loadTexturedPlanet(mercuryData, mercuryData.distanceFromAxis, 0, 0);
@@ -470,10 +531,11 @@ function init() {
   uranus = loadTexturedPlanet(uranusData, uranusData.distanceFromAxis, 0, 0);
   neptune = loadTexturedPlanet(neptuneData, neptuneData.distanceFromAxis, 0, 0);
   pluto = loadTexturedPlanet(plutoData, plutoData.distanceFromAxis, 0, 0);
+
   moon = loadTexturedPlanet(moonData, moonData.distanceFromAxis, 0, 0);
 
   ring = getTube(
-    65.232,
+    22.5232,
     0.55,
     480,
     0x757064,
